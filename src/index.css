@@ -1,0 +1,184 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Eco-friendly nature-inspired color palette */
+    --background: 125 25% 97%;
+    --foreground: 140 30% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 140 30% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 140 30% 15%;
+
+    /* Deep forest green */
+    --primary: 145 60% 35%;
+    --primary-foreground: 0 0% 100%;
+    
+    /* Earth brown */
+    --secondary: 30 25% 45%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 120 15% 92%;
+    --muted-foreground: 140 20% 45%;
+
+    /* Fresh leaf green */
+    --accent: 95 55% 50%;
+    --accent-foreground: 140 30% 15%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 120 20% 85%;
+    --input: 120 20% 90%;
+    --ring: 145 60% 45%;
+
+    --radius: 0.75rem;
+
+    /* Nature gradients */
+    --gradient-forest: linear-gradient(135deg, hsl(145 60% 35%) 0%, hsl(165 55% 40%) 100%);
+    --gradient-earth: linear-gradient(135deg, hsl(30 25% 45%) 0%, hsl(35 30% 50%) 100%);
+    --gradient-leaf: linear-gradient(135deg, hsl(95 55% 50%) 0%, hsl(110 50% 55%) 100%);
+    --gradient-sky: linear-gradient(180deg, hsl(195 70% 85%) 0%, hsl(125 25% 97%) 100%);
+    
+    /* Glass effects */
+    --glass-bg: hsla(0, 0%, 100%, 0.75);
+    --glass-border: hsla(120, 20%, 85%, 0.5);
+  }
+
+  .dark {
+    --background: 140 25% 12%;
+    --foreground: 120 15% 90%;
+
+    --card: 140 20% 15%;
+    --card-foreground: 120 15% 90%;
+
+    --popover: 140 20% 15%;
+    --popover-foreground: 120 15% 90%;
+
+    --primary: 145 55% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 30 20% 35%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 140 15% 20%;
+    --muted-foreground: 120 10% 60%;
+
+    --accent: 95 50% 40%;
+    --accent-foreground: 120 15% 90%;
+
+    --destructive: 0 60% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 140 15% 25%;
+    --input: 140 15% 22%;
+    --ring: 145 55% 50%;
+
+    --gradient-forest: linear-gradient(135deg, hsl(145 55% 25%) 0%, hsl(165 50% 30%) 100%);
+    --gradient-earth: linear-gradient(135deg, hsl(30 20% 30%) 0%, hsl(35 25% 35%) 100%);
+    --gradient-leaf: linear-gradient(135deg, hsl(95 50% 35%) 0%, hsl(110 45% 40%) 100%);
+    --gradient-sky: linear-gradient(180deg, hsl(195 40% 25%) 0%, hsl(140 25% 12%) 100%);
+    
+    --glass-bg: hsla(140, 20%, 15%, 0.75);
+    --glass-border: hsla(140, 15%, 25%, 0.5);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    background: var(--gradient-sky);
+    min-height: 100vh;
+  }
+}
+
+/* Eco-friendly animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(5deg);
+  }
+}
+
+@keyframes leaf-fall {
+  0% {
+    transform: translateY(-100px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes wave {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(10px);
+  }
+}
+
+@keyframes grow {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-leaf-fall {
+  animation: leaf-fall 15s linear infinite;
+}
+
+.animate-wave {
+  animation: wave 2s ease-in-out infinite;
+}
+
+.animate-grow {
+  animation: grow 0.3s ease-out;
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+}
