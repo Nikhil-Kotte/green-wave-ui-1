@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { Leaf, Recycle, Users, Truck, Building2 } from "lucide-react";
+import { Leaf, Recycle, ArrowLeft } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 const LoginPage = () => {
@@ -13,7 +13,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login, demoAccounts } = useAuth();
+  const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,28 +38,6 @@ const LoginPage = () => {
     setLoading(false);
   };
 
-  const handleDemoLogin = async (demoEmail: string, demoPassword: string) => {
-    setLoading(true);
-    const result = await login(demoEmail, demoPassword);
-    
-    if (result.success) {
-      toast({
-        title: "Demo login successful!",
-        description: "Exploring as demo user",
-      });
-      navigate("/dashboard");
-    }
-    
-    setLoading(false);
-  };
-
-  const roleIcons = {
-    user: <Users className="w-5 h-5" />,
-    collector: <Truck className="w-5 h-5" />,
-    ngo: <Recycle className="w-5 h-5" />,
-    admin: <Building2 className="w-5 h-5" />,
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden px-4 py-8">
       {/* Floating decorations */}
@@ -68,26 +46,37 @@ const LoginPage = () => {
         <Recycle className="absolute top-40 right-[15%] text-accent/30 animate-float" size={36} style={{ animationDelay: "1s" }} />
         <Leaf className="absolute bottom-32 left-[20%] text-primary/25 animate-float" size={32} style={{ animationDelay: "2s" }} />
         <Leaf className="absolute top-60 right-[25%] text-accent/15 animate-float" size={28} style={{ animationDelay: "0.5s" }} />
+        <Recycle className="absolute bottom-24 right-[12%] text-primary/20 animate-float" size={44} style={{ animationDelay: "1.5s" }} />
       </div>
 
-      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Login Form */}
-        <Card className="p-8 glass-card animate-grow">
+      <div className="w-full max-w-md relative z-10">
+        {/* Back to Home Button */}
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/")}
+          className="mb-6 group hover:bg-primary/10 transition-all duration-300 animate-grow"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+          Back to Home
+        </Button>
+
+        {/* Login Card */}
+        <Card className="p-8 glass-card animate-grow border-2 border-primary/20 shadow-2xl" style={{ animationDelay: "0.1s" }}>
           <div className="text-center mb-8">
-            <div className="flex items-center justify-center gap-2 mb-4">
+            <div className="flex items-center justify-center gap-2 mb-4 animate-grow" style={{ animationDelay: "0.2s" }}>
               <Recycle className="text-primary w-10 h-10 animate-wave" />
               <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                EcoWaste Manager
+                Welcome Back
               </h1>
             </div>
-            <p className="text-muted-foreground">
-              Sustainable waste management for a greener future
+            <p className="text-muted-foreground animate-grow" style={{ animationDelay: "0.3s" }}>
+              Sign in to continue your sustainable journey
             </p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div className="space-y-2 animate-grow" style={{ animationDelay: "0.4s" }}>
+              <Label htmlFor="email" className="text-foreground font-medium">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -95,12 +84,12 @@ const LoginPage = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="border-border focus:border-primary transition-colors"
+                className="border-border focus:border-primary transition-all duration-300 hover:border-primary/50"
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+            <div className="space-y-2 animate-grow" style={{ animationDelay: "0.5s" }}>
+              <Label htmlFor="password" className="text-foreground font-medium">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -108,66 +97,36 @@ const LoginPage = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="border-border focus:border-primary transition-colors"
+                className="border-border focus:border-primary transition-all duration-300 hover:border-primary/50"
               />
             </div>
 
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-all duration-300"
+              className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl animate-grow"
               disabled={loading}
+              style={{ animationDelay: "0.6s" }}
             >
-              {loading ? "Logging in..." : "Login"}
+              {loading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
 
-          <p className="text-center text-sm text-muted-foreground mt-6">
-            Don't have an account?{" "}
-            <Link to="/signup" className="text-primary hover:underline font-medium">
-              Sign up
-            </Link>
-          </p>
-        </Card>
-
-        {/* Demo Accounts */}
-        <Card className="p-8 glass-card animate-grow" style={{ animationDelay: "0.1s" }}>
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Try Demo Accounts 🎯
-            </h2>
+          <div className="mt-6 text-center animate-grow" style={{ animationDelay: "0.7s" }}>
             <p className="text-sm text-muted-foreground">
-              Click any account below to explore different user experiences
+              Don't have an account?{" "}
+              <Link to="/signup" className="text-primary hover:text-accent font-medium transition-colors duration-300 hover:underline">
+                Create one now
+              </Link>
             </p>
           </div>
 
-          <div className="space-y-3">
-            {demoAccounts.map((account, index) => (
-              <button
-                key={index}
-                onClick={() => handleDemoLogin(account.email, account.password)}
-                disabled={loading}
-                className="w-full p-4 rounded-lg border border-border hover:border-primary bg-card hover:bg-muted/50 transition-all duration-300 text-left group disabled:opacity-50"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                    {roleIcons[account.role]}
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-semibold text-foreground">{account.name}</p>
-                    <p className="text-sm text-muted-foreground">{account.description}</p>
-                  </div>
-                  <div className="text-xs text-muted-foreground hidden sm:block">
-                    <p className="font-mono">{account.email}</p>
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-
-          <div className="mt-6 p-4 rounded-lg bg-accent/10 border border-accent/20">
-            <p className="text-sm text-muted-foreground">
-              <span className="font-semibold text-accent">All demo accounts:</span> Password is <code className="px-2 py-1 rounded bg-background/50 font-mono text-xs">demo123</code>
-            </p>
+          {/* Decorative element */}
+          <div className="mt-8 pt-6 border-t border-border/50 text-center animate-grow" style={{ animationDelay: "0.8s" }}>
+            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+              <Leaf className="w-4 h-4 text-accent animate-wave" />
+              <span>Secured by EcoWaste Manager</span>
+              <Recycle className="w-4 h-4 text-primary animate-wave" style={{ animationDelay: "0.5s" }} />
+            </div>
           </div>
         </Card>
       </div>
