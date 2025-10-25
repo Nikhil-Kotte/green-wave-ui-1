@@ -1,96 +1,74 @@
 import { db } from '@/db';
 import { trackingLocations, user, routes } from '@/db/schema';
-import { eq } from 'drizzle-orm';
 
 async function main() {
-    // Query actual collector user IDs from the database
-    const collectors = await db.select({ id: user.id }).from(user).limit(2);
-    
-    if (collectors.length < 2) {
-        console.error('❌ Not enough users in database. Please run the users seeder first.');
-        return;
-    }
-
-    // Query actual route IDs from the database
-    const existingRoutes = await db.select({ id: routes.id }).from(routes).limit(3);
-    
-    const collectorIds = collectors.map(c => c.id);
-    const routeIds = existingRoutes.length > 0 ? existingRoutes.map(r => r.id) : [null];
-
-    // Base coordinates (San Francisco area)
-    const baseLatitude = 37.7749;
-    const baseLongitude = -122.4194;
-
-    // Helper function to generate progressive coordinates
-    const generatePath = (startLat: number, startLon: number, points: number) => {
-        const path = [];
-        let lat = startLat;
-        let lon = startLon;
-        
-        for (let i = 0; i < points; i++) {
-            path.push({ lat, lon });
-            // Increment coordinates to simulate movement (roughly 100-200 meters per point)
-            lat += (Math.random() * 0.002) + 0.001;
-            lon += (Math.random() * 0.002) + 0.001;
-        }
-        
-        return path;
-    };
-
-    // Generate timestamps over the past 2-4 hours
-    const now = new Date();
-    const generateTimestamps = (count: number, hoursAgo: number) => {
-        const timestamps = [];
-        const startTime = new Date(now.getTime() - (hoursAgo * 60 * 60 * 1000));
-        const interval = (hoursAgo * 60 * 60 * 1000) / count;
-        
-        for (let i = 0; i < count; i++) {
-            const timestamp = new Date(startTime.getTime() + (i * interval));
-            timestamps.push(timestamp.toISOString());
-        }
-        
-        return timestamps;
-    };
-
-    const sampleTrackingLocations = [];
-
-    // Collector 1: 10 location points over 3 hours
-    const collector1Path = generatePath(baseLatitude, baseLongitude, 10);
-    const collector1Timestamps = generateTimestamps(10, 3);
-    const collector1Speeds = [25, 32, 28, 35, 30, 40, 38, 33, 27, 20];
-
-    for (let i = 0; i < collector1Path.length; i++) {
-        sampleTrackingLocations.push({
-            collectorId: collectorIds[0],
-            routeId: routeIds[0],
-            latitude: collector1Path[i].lat,
-            longitude: collector1Path[i].lon,
-            timestamp: collector1Timestamps[i],
-            speed: collector1Speeds[i],
-        });
-    }
-
-    // Collector 2: 12 location points over 4 hours
-    const collector2Path = generatePath(baseLatitude + 0.01, baseLongitude - 0.01, 12);
-    const collector2Timestamps = generateTimestamps(12, 4);
-    const collector2Speeds = [22, 30, 35, 28, 42, 38, 33, 29, 45, 40, 36, 25];
-
-    for (let i = 0; i < collector2Path.length; i++) {
-        sampleTrackingLocations.push({
-            collectorId: collectorIds[1],
-            routeId: routeIds.length > 1 ? routeIds[1] : routeIds[0],
-            latitude: collector2Path[i].lat,
-            longitude: collector2Path[i].lon,
-            timestamp: collector2Timestamps[i],
-            speed: collector2Speeds[i],
-        });
-    }
-
-    await db.insert(trackingLocations).values(sampleTrackingLocations);
-    
-    console.log('✅ Tracking locations seeder completed successfully');
+  // Query users to get collectors
+  const users = await db.select().from(user).orderBy(user.email);
+  
+  // Query routes to get route IDs
+  const routesData = await db.select().from(routes).limit(2);
+  
+  // Verify we have enough data
+  if (users.length < 4) {
+    throw new Error('Not enough users in database. Need at least 4 users.');
+  }
+  
+  if (routesData.length < 2) {
+    throw new Error('Not enough routes in database. Need at least 2 routes.');
+  }
+  
+  // Get collector IDs (index 2 and 3 - Carlos Rodriguez and David Thompson)
+  const collector1Id = users[2].id;
+  const collector2Id = users[3].id;
+  
+  // Get route IDs
+  const route1Id = routesData[0].id;
+  const route2Id = routesData[1].id;
+  
+  // Generate location points
+  const locationPoints = [];
+  
+  // Collector 1 - 10 location points
+  // Base: 12.9716°N, 77.5946°E (MG Road, Bangalore)
+  // Moving northeast over 3 hours (starting 3 hours ago)
+  const collector1BaseTime = Date.now() - (3 * 60 * 60 * 1000);
+  const collector1Interval = 18 * 60 * 1000; // 18 minutes
+  
+  for (let i = 0; i < 10; i++) {
+    locationPoints.push({
+      collectorId: collector1Id,
+      routeId: route1Id,
+      latitude: 12.9716 + (i * 0.0025), // Progressive increment northeast
+      longitude: 77.5946 + (i * 0.0015),
+      timestamp: new Date(collector1BaseTime + (i * collector1Interval)).toISOString(),
+      speed: 22 + (i * 2.2), // 22-42 km/h range
+    });
+  }
+  
+  // Collector 2 - 12 location points
+  // Base: 12.9616°N, 77.5846°E (Indiranagar area)
+  // Moving east over 4 hours (starting 4 hours ago)
+  const collector2BaseTime = Date.now() - (4 * 60 * 60 * 1000);
+  const collector2Interval = 20 * 60 * 1000; // 20 minutes
+  
+  for (let i = 0; i < 12; i++) {
+    locationPoints.push({
+      collectorId: collector2Id,
+      routeId: route2Id,
+      latitude: 12.9616 + (i * 0.0025), // Progressive increment
+      longitude: 77.5846 + (i * 0.002), // Moving east
+      timestamp: new Date(collector2BaseTime + (i * collector2Interval)).toISOString(),
+      speed: 26 + (i * 1.5), // 26-44 km/h range
+    });
+  }
+  
+  await db.insert(trackingLocations).values(locationPoints);
+  
+  console.log('✅ Tracking locations seeder completed successfully');
+  console.log(`   - Generated 10 location points for collector 1 (${collector1Id})`);
+  console.log(`   - Generated 12 location points for collector 2 (${collector2Id})`);
 }
 
 main().catch((error) => {
-    console.error('❌ Seeder failed:', error);
+  console.error('❌ Seeder failed:', error);
 });

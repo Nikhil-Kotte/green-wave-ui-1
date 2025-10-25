@@ -2,219 +2,200 @@ import { db } from '@/db';
 import { routeStops, routes, pickups } from '@/db/schema';
 
 async function main() {
-    // First, query actual routes to get their IDs
+    // Query existing routes and pickups
     const existingRoutes = await db.select().from(routes);
-    
-    if (existingRoutes.length === 0) {
-        console.error('❌ No routes found. Please run routes seeder first.');
-        return;
-    }
-
-    // Query actual pickups to get their IDs and addresses
     const existingPickups = await db.select().from(pickups);
-    
-    if (existingPickups.length === 0) {
-        console.error('❌ No pickups found. Please run pickups seeder first.');
-        return;
+
+    // Verify we have enough routes and pickups
+    if (existingRoutes.length < 3) {
+        throw new Error(`❌ Not enough routes found. Expected at least 3, found ${existingRoutes.length}`);
+    }
+    if (existingPickups.length < 16) {
+        throw new Error(`❌ Not enough pickups found. Expected at least 16, found ${existingPickups.length}`);
     }
 
-    // Separate routes by status
-    const completedRoutes = existingRoutes.filter(r => r.status === 'completed').slice(0, 2);
-    const activeRoute = existingRoutes.find(r => r.status === 'active');
+    // Route 1 - 5 completed stops (Jan 15, 2024)
+    const route1Stops = [
+        {
+            routeId: existingRoutes[0].id,
+            pickupId: existingPickups[0].id,
+            stopOrder: 1,
+            address: existingPickups[0].address,
+            wasteType: existingPickups[0].wasteType,
+            status: 'completed',
+            arrivalTime: new Date('2024-01-15T08:15:00').toISOString(),
+            departureTime: new Date('2024-01-15T08:27:00').toISOString(),
+        },
+        {
+            routeId: existingRoutes[0].id,
+            pickupId: existingPickups[1].id,
+            stopOrder: 2,
+            address: existingPickups[1].address,
+            wasteType: existingPickups[1].wasteType,
+            status: 'completed',
+            arrivalTime: new Date('2024-01-15T08:45:00').toISOString(),
+            departureTime: new Date('2024-01-15T08:56:00').toISOString(),
+        },
+        {
+            routeId: existingRoutes[0].id,
+            pickupId: existingPickups[2].id,
+            stopOrder: 3,
+            address: existingPickups[2].address,
+            wasteType: existingPickups[2].wasteType,
+            status: 'completed',
+            arrivalTime: new Date('2024-01-15T09:10:00').toISOString(),
+            departureTime: new Date('2024-01-15T09:21:00').toISOString(),
+        },
+        {
+            routeId: existingRoutes[0].id,
+            pickupId: existingPickups[3].id,
+            stopOrder: 4,
+            address: existingPickups[3].address,
+            wasteType: existingPickups[3].wasteType,
+            status: 'completed',
+            arrivalTime: new Date('2024-01-15T09:38:00').toISOString(),
+            departureTime: new Date('2024-01-15T09:51:00').toISOString(),
+        },
+        {
+            routeId: existingRoutes[0].id,
+            pickupId: existingPickups[4].id,
+            stopOrder: 5,
+            address: existingPickups[4].address,
+            wasteType: existingPickups[4].wasteType,
+            status: 'completed',
+            arrivalTime: new Date('2024-01-15T10:05:00').toISOString(),
+            departureTime: new Date('2024-01-15T10:15:00').toISOString(),
+        },
+    ];
 
-    const sampleRouteStops = [];
+    // Route 2 - 6 completed stops (Jan 16, 2024)
+    const route2Stops = [
+        {
+            routeId: existingRoutes[1].id,
+            pickupId: existingPickups[5].id,
+            stopOrder: 1,
+            address: existingPickups[5].address,
+            wasteType: existingPickups[5].wasteType,
+            status: 'completed',
+            arrivalTime: new Date('2024-01-16T08:10:00').toISOString(),
+            departureTime: new Date('2024-01-16T08:22:00').toISOString(),
+        },
+        {
+            routeId: existingRoutes[1].id,
+            pickupId: existingPickups[6].id,
+            stopOrder: 2,
+            address: existingPickups[6].address,
+            wasteType: existingPickups[6].wasteType,
+            status: 'completed',
+            arrivalTime: new Date('2024-01-16T08:40:00').toISOString(),
+            departureTime: new Date('2024-01-16T08:53:00').toISOString(),
+        },
+        {
+            routeId: existingRoutes[1].id,
+            pickupId: existingPickups[7].id,
+            stopOrder: 3,
+            address: existingPickups[7].address,
+            wasteType: existingPickups[7].wasteType,
+            status: 'completed',
+            arrivalTime: new Date('2024-01-16T09:08:00').toISOString(),
+            departureTime: new Date('2024-01-16T09:21:00').toISOString(),
+        },
+        {
+            routeId: existingRoutes[1].id,
+            pickupId: existingPickups[8].id,
+            stopOrder: 4,
+            address: existingPickups[8].address,
+            wasteType: existingPickups[8].wasteType,
+            status: 'completed',
+            arrivalTime: new Date('2024-01-16T09:40:00').toISOString(),
+            departureTime: new Date('2024-01-16T09:50:00').toISOString(),
+        },
+        {
+            routeId: existingRoutes[1].id,
+            pickupId: existingPickups[9].id,
+            stopOrder: 5,
+            address: existingPickups[9].address,
+            wasteType: existingPickups[9].wasteType,
+            status: 'completed',
+            arrivalTime: new Date('2024-01-16T10:10:00').toISOString(),
+            departureTime: new Date('2024-01-16T10:24:00').toISOString(),
+        },
+        {
+            routeId: existingRoutes[1].id,
+            pickupId: existingPickups[10].id,
+            stopOrder: 6,
+            address: existingPickups[10].address,
+            wasteType: existingPickups[10].wasteType,
+            status: 'completed',
+            arrivalTime: new Date('2024-01-16T10:42:00').toISOString(),
+            departureTime: new Date('2024-01-16T10:57:00').toISOString(),
+        },
+    ];
 
-    // Create stops for completed routes (4-6 stops each)
-    if (completedRoutes.length >= 1) {
-        const route1 = completedRoutes[0];
-        const route1Pickups = existingPickups.slice(0, 5);
-        
-        sampleRouteStops.push(
-            {
-                routeId: route1.id,
-                pickupId: route1Pickups[0].id,
-                stopOrder: 1,
-                address: route1Pickups[0].address,
-                wasteType: route1Pickups[0].wasteType,
-                status: 'completed',
-                arrivalTime: new Date('2024-01-15T06:15:00').toISOString(),
-                departureTime: new Date('2024-01-15T06:30:00').toISOString(),
-            },
-            {
-                routeId: route1.id,
-                pickupId: route1Pickups[1].id,
-                stopOrder: 2,
-                address: route1Pickups[1].address,
-                wasteType: route1Pickups[1].wasteType,
-                status: 'completed',
-                arrivalTime: new Date('2024-01-15T06:45:00').toISOString(),
-                departureTime: new Date('2024-01-15T07:00:00').toISOString(),
-            },
-            {
-                routeId: route1.id,
-                pickupId: route1Pickups[2].id,
-                stopOrder: 3,
-                address: route1Pickups[2].address,
-                wasteType: route1Pickups[2].wasteType,
-                status: 'completed',
-                arrivalTime: new Date('2024-01-15T07:15:00').toISOString(),
-                departureTime: new Date('2024-01-15T07:35:00').toISOString(),
-            },
-            {
-                routeId: route1.id,
-                pickupId: route1Pickups[3].id,
-                stopOrder: 4,
-                address: route1Pickups[3].address,
-                wasteType: route1Pickups[3].wasteType,
-                status: 'completed',
-                arrivalTime: new Date('2024-01-15T07:50:00').toISOString(),
-                departureTime: new Date('2024-01-15T08:10:00').toISOString(),
-            },
-            {
-                routeId: route1.id,
-                pickupId: route1Pickups[4].id,
-                stopOrder: 5,
-                address: route1Pickups[4].address,
-                wasteType: route1Pickups[4].wasteType,
-                status: 'completed',
-                arrivalTime: new Date('2024-01-15T08:25:00').toISOString(),
-                departureTime: new Date('2024-01-15T08:45:00').toISOString(),
-            }
-        );
-    }
+    // Route 3 - 5 stops (2 completed, 1 in-progress, 2 pending) (Jan 20, 2024)
+    const route3Stops = [
+        {
+            routeId: existingRoutes[2].id,
+            pickupId: existingPickups[11].id,
+            stopOrder: 1,
+            address: existingPickups[11].address,
+            wasteType: existingPickups[11].wasteType,
+            status: 'completed',
+            arrivalTime: new Date('2024-01-20T08:12:00').toISOString(),
+            departureTime: new Date('2024-01-20T08:25:00').toISOString(),
+        },
+        {
+            routeId: existingRoutes[2].id,
+            pickupId: existingPickups[12].id,
+            stopOrder: 2,
+            address: existingPickups[12].address,
+            wasteType: existingPickups[12].wasteType,
+            status: 'completed',
+            arrivalTime: new Date('2024-01-20T08:42:00').toISOString(),
+            departureTime: new Date('2024-01-20T08:55:00').toISOString(),
+        },
+        {
+            routeId: existingRoutes[2].id,
+            pickupId: existingPickups[13].id,
+            stopOrder: 3,
+            address: existingPickups[13].address,
+            wasteType: existingPickups[13].wasteType,
+            status: 'in-progress',
+            arrivalTime: new Date('2024-01-20T09:10:00').toISOString(),
+            departureTime: null,
+        },
+        {
+            routeId: existingRoutes[2].id,
+            pickupId: existingPickups[14].id,
+            stopOrder: 4,
+            address: existingPickups[14].address,
+            wasteType: existingPickups[14].wasteType,
+            status: 'pending',
+            arrivalTime: null,
+            departureTime: null,
+        },
+        {
+            routeId: existingRoutes[2].id,
+            pickupId: existingPickups[15].id,
+            stopOrder: 5,
+            address: existingPickups[15].address,
+            wasteType: existingPickups[15].wasteType,
+            status: 'pending',
+            arrivalTime: null,
+            departureTime: null,
+        },
+    ];
 
-    if (completedRoutes.length >= 2) {
-        const route2 = completedRoutes[1];
-        const route2Pickups = existingPickups.slice(5, 11);
-        
-        sampleRouteStops.push(
-            {
-                routeId: route2.id,
-                pickupId: route2Pickups[0].id,
-                stopOrder: 1,
-                address: route2Pickups[0].address,
-                wasteType: route2Pickups[0].wasteType,
-                status: 'completed',
-                arrivalTime: new Date('2024-01-16T06:10:00').toISOString(),
-                departureTime: new Date('2024-01-16T06:25:00').toISOString(),
-            },
-            {
-                routeId: route2.id,
-                pickupId: route2Pickups[1].id,
-                stopOrder: 2,
-                address: route2Pickups[1].address,
-                wasteType: route2Pickups[1].wasteType,
-                status: 'completed',
-                arrivalTime: new Date('2024-01-16T06:40:00').toISOString(),
-                departureTime: new Date('2024-01-16T06:55:00').toISOString(),
-            },
-            {
-                routeId: route2.id,
-                pickupId: route2Pickups[2].id,
-                stopOrder: 3,
-                address: route2Pickups[2].address,
-                wasteType: route2Pickups[2].wasteType,
-                status: 'completed',
-                arrivalTime: new Date('2024-01-16T07:10:00').toISOString(),
-                departureTime: new Date('2024-01-16T07:30:00').toISOString(),
-            },
-            {
-                routeId: route2.id,
-                pickupId: route2Pickups[3].id,
-                stopOrder: 4,
-                address: route2Pickups[3].address,
-                wasteType: route2Pickups[3].wasteType,
-                status: 'completed',
-                arrivalTime: new Date('2024-01-16T07:45:00').toISOString(),
-                departureTime: new Date('2024-01-16T08:00:00').toISOString(),
-            },
-            {
-                routeId: route2.id,
-                pickupId: route2Pickups[4].id,
-                stopOrder: 5,
-                address: route2Pickups[4].address,
-                wasteType: route2Pickups[4].wasteType,
-                status: 'completed',
-                arrivalTime: new Date('2024-01-16T08:15:00').toISOString(),
-                departureTime: new Date('2024-01-16T08:35:00').toISOString(),
-            },
-            {
-                routeId: route2.id,
-                pickupId: route2Pickups[5].id,
-                stopOrder: 6,
-                address: route2Pickups[5].address,
-                wasteType: route2Pickups[5].wasteType,
-                status: 'completed',
-                arrivalTime: new Date('2024-01-16T08:50:00').toISOString(),
-                departureTime: new Date('2024-01-16T09:10:00').toISOString(),
-            }
-        );
-    }
+    // Combine all stops
+    const allStops = [...route1Stops, ...route2Stops, ...route3Stops];
 
-    // Create stops for active route (5 stops with mixed statuses)
-    if (activeRoute) {
-        const activePickups = existingPickups.slice(11, 16);
-        
-        sampleRouteStops.push(
-            {
-                routeId: activeRoute.id,
-                pickupId: activePickups[0].id,
-                stopOrder: 1,
-                address: activePickups[0].address,
-                wasteType: activePickups[0].wasteType,
-                status: 'completed',
-                arrivalTime: new Date('2024-01-20T06:05:00').toISOString(),
-                departureTime: new Date('2024-01-20T06:20:00').toISOString(),
-            },
-            {
-                routeId: activeRoute.id,
-                pickupId: activePickups[1].id,
-                stopOrder: 2,
-                address: activePickups[1].address,
-                wasteType: activePickups[1].wasteType,
-                status: 'completed',
-                arrivalTime: new Date('2024-01-20T06:35:00').toISOString(),
-                departureTime: new Date('2024-01-20T06:50:00').toISOString(),
-            },
-            {
-                routeId: activeRoute.id,
-                pickupId: activePickups[2].id,
-                stopOrder: 3,
-                address: activePickups[2].address,
-                wasteType: activePickups[2].wasteType,
-                status: 'in-progress',
-                arrivalTime: new Date('2024-01-20T07:05:00').toISOString(),
-                departureTime: null,
-            },
-            {
-                routeId: activeRoute.id,
-                pickupId: activePickups[3].id,
-                stopOrder: 4,
-                address: activePickups[3].address,
-                wasteType: activePickups[3].wasteType,
-                status: 'pending',
-                arrivalTime: null,
-                departureTime: null,
-            },
-            {
-                routeId: activeRoute.id,
-                pickupId: activePickups[4].id,
-                stopOrder: 5,
-                address: activePickups[4].address,
-                wasteType: activePickups[4].wasteType,
-                status: 'pending',
-                arrivalTime: null,
-                departureTime: null,
-            }
-        );
-    }
+    await db.insert(routeStops).values(allStops);
 
-    if (sampleRouteStops.length > 0) {
-        await db.insert(routeStops).values(sampleRouteStops);
-        console.log('✅ Route stops seeder completed successfully');
-    } else {
-        console.log('⚠️ No route stops created. Check if routes and pickups exist.');
-    }
+    console.log('✅ Route stops seeder completed successfully');
+    console.log(`   - Route 1: ${route1Stops.length} completed stops`);
+    console.log(`   - Route 2: ${route2Stops.length} completed stops`);
+    console.log(`   - Route 3: ${route3Stops.length} stops (2 completed, 1 in-progress, 2 pending)`);
+    console.log(`   - Total: ${allStops.length} route stops created`);
 }
 
 main().catch((error) => {

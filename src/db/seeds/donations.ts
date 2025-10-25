@@ -2,141 +2,152 @@ import { db } from '@/db';
 import { user, donations } from '@/db/schema';
 
 async function main() {
-    // First, get actual user IDs from the database
-    const existingUsers = await db.select({ id: user.id }).from(user);
+    // First, verify we have enough users in the database
+    const users = await db.select().from(user).orderBy(user.email);
     
-    if (existingUsers.length < 3) {
-        throw new Error('Not enough users in database. Please seed users first.');
+    if (users.length < 10) {
+        throw new Error(`❌ Not enough users in database. Found ${users.length}, need at least 10. Please run the users seeder first.`);
     }
 
-    // Use actual user IDs from database
-    const donorIds = existingUsers.slice(0, 5).map(u => u.id);
-    const ngoIds = existingUsers.slice(5, 8).map(u => u.id);
-
-    const now = new Date();
-    const daysAgo = (days: number) => new Date(now.getTime() - days * 24 * 60 * 60 * 1000).toISOString();
-
     const sampleDonations = [
-        // 5 Pending donations
+        // Pending Donations (no NGO assigned)
         {
-            userId: donorIds[0],
+            userId: 'user_01h4kxt2e8z9y3b1n7m6q5w8r4',
             ngoId: null,
             itemType: 'electronics',
-            itemName: 'Samsung Galaxy S10',
+            itemName: 'Dell Laptop i5 8GB RAM',
             condition: 'good',
             quantity: 1,
-            description: 'Fully functional smartphone with minor scratches on the back. Includes original charger and case.',
-            pickupAddress: '123 Green Valley Road, Mumbai 400001',
-            contactNumber: '+91 98765 43210',
+            description: 'Working laptop with minor scratches on the lid. Includes original charger and carrying case. Battery holds charge for 3-4 hours. Perfect for students or basic office work.',
+            pickupAddress: '123 Tech Street, Silicon Valley, CA 94025',
+            contactNumber: '+1-555-0101',
             status: 'pending',
-            createdAt: daysAgo(2),
-            updatedAt: daysAgo(2),
+            createdAt: new Date('2024-01-15T10:30:00Z'),
+            updatedAt: new Date('2024-01-15T10:30:00Z'),
         },
         {
-            userId: donorIds[1],
+            userId: 'user_06n9qcy7j3e4d8g6s2r1v0b3w9',
             ngoId: null,
             itemType: 'furniture',
-            itemName: 'IKEA Dining Table Set',
+            itemName: 'Oak Dining Table with 4 Chairs',
             condition: 'excellent',
-            quantity: 1,
-            description: 'Solid wood dining table with 4 chairs. Like new condition, only used for 6 months.',
-            pickupAddress: '45 Park Street, Kolkata 700016',
-            contactNumber: '+91 98234 56789',
+            quantity: 5,
+            description: 'Solid oak dining set in excellent condition. Table seats 6-8 people comfortably. Chairs have cushioned seats with no tears or stains. Heavy and sturdy construction.',
+            pickupAddress: '456 Home Avenue, Portland, OR 97201',
+            contactNumber: '+1-555-0102',
             status: 'pending',
-            createdAt: daysAgo(3),
-            updatedAt: daysAgo(3),
+            createdAt: new Date('2024-01-16T14:15:00Z'),
+            updatedAt: new Date('2024-01-16T14:15:00Z'),
         },
         {
-            userId: donorIds[2],
+            userId: 'user_07o0rdz8k4f5e9h7t3s2w1c4x0',
             ngoId: null,
             itemType: 'clothing',
-            itemName: 'Winter Coats and Jackets',
+            itemName: 'Winter Clothes Bundle',
             condition: 'good',
-            quantity: 8,
-            description: 'Collection of 8 winter jackets in various sizes (M, L, XL). Clean and in good condition.',
-            pickupAddress: '78 MG Road, Bangalore 560001',
-            contactNumber: '+91 98876 54321',
+            quantity: 15,
+            description: 'Assorted winter clothing including jackets, sweaters, and coats for adults and children. All items are clean, no major stains or damage. Sizes range from small to XL.',
+            pickupAddress: '789 Charity Lane, Seattle, WA 98101',
+            contactNumber: '+1-555-0103',
             status: 'pending',
-            createdAt: daysAgo(4),
-            updatedAt: daysAgo(4),
+            createdAt: new Date('2024-01-17T09:45:00Z'),
+            updatedAt: new Date('2024-01-17T09:45:00Z'),
         },
         {
-            userId: donorIds[3],
+            userId: 'user_09q2tfb0m6h7g1j9v5u4y3e6z2',
             ngoId: null,
             itemType: 'books',
-            itemName: 'Educational Textbooks Collection',
-            condition: 'good',
-            quantity: 25,
-            description: 'Assorted educational books including science, mathematics, and English textbooks for grades 8-12.',
-            pickupAddress: '234 Anna Salai, Chennai 600002',
-            contactNumber: '+91 98345 67890',
+            itemName: 'College Textbooks Collection',
+            condition: 'fair',
+            quantity: 20,
+            description: 'Various college textbooks covering engineering, computer science, and mathematics. Some highlighting and notes inside. Covers show wear but pages are intact. Great for students on a budget.',
+            pickupAddress: '321 University Drive, Austin, TX 78701',
+            contactNumber: '+1-555-0104',
             status: 'pending',
-            createdAt: daysAgo(5),
-            updatedAt: daysAgo(5),
+            createdAt: new Date('2024-01-18T16:20:00Z'),
+            updatedAt: new Date('2024-01-18T16:20:00Z'),
         },
         {
-            userId: donorIds[4],
+            userId: 'user_10r3ugc1n7i8h2k0w6v5z4f7a3',
             ngoId: null,
             itemType: 'toys',
-            itemName: 'Children Toys and Games',
+            itemName: 'Educational Toys Set',
             condition: 'excellent',
-            quantity: 15,
-            description: 'Mix of board games, puzzles, and educational toys. All pieces complete and in excellent condition.',
-            pickupAddress: '567 Civil Lines, Delhi 110054',
-            contactNumber: '+91 98456 78901',
+            quantity: 8,
+            description: 'High-quality educational toys for ages 3-8. Includes building blocks, puzzles, STEM learning kits, and board games. All pieces complete and toys are thoroughly cleaned.',
+            pickupAddress: '654 Family Street, Denver, CO 80202',
+            contactNumber: '+1-555-0105',
             status: 'pending',
-            createdAt: daysAgo(2),
-            updatedAt: daysAgo(2),
+            createdAt: new Date('2024-01-19T11:00:00Z'),
+            updatedAt: new Date('2024-01-19T11:00:00Z'),
         },
-        // 2 Accepted donations
+
+        // Accepted Donations (NGO assigned)
         {
-            userId: donorIds[0],
-            ngoId: ngoIds[0],
+            userId: 'user_01h4kxt2e8z9y3b1n7m6q5w8r4',
+            ngoId: 'user_07o0rdz8k4f5e9h7t3s2w1c4x0',
             itemType: 'kitchenware',
-            itemName: 'Stainless Steel Cookware Set',
+            itemName: 'Complete Kitchen Utensils Set',
+            condition: 'good',
+            quantity: 25,
+            description: 'Full set of kitchen utensils including pots, pans, plates, cutlery, and cooking tools. Some items show normal wear from use but all are functional and clean. Great for setting up a new kitchen.',
+            pickupAddress: '987 Kitchen Road, San Francisco, CA 94102',
+            contactNumber: '+1-555-0106',
+            status: 'accepted',
+            createdAt: new Date('2024-01-12T08:30:00Z'),
+            updatedAt: new Date('2024-01-14T10:15:00Z'),
+        },
+        {
+            userId: 'user_06n9qcy7j3e4d8g6s2r1v0b3w9',
+            ngoId: 'user_08p1sea9l5g6f0i8u4t3x2d5y1',
+            itemType: 'electronics',
+            itemName: 'Samsung Smart TV 42 inch',
             condition: 'excellent',
             quantity: 1,
-            description: 'Complete 12-piece stainless steel cookware set including pots, pans, and lids. Barely used.',
-            pickupAddress: '89 Residency Road, Pune 411001',
-            contactNumber: '+91 98567 89012',
+            description: 'Samsung 42-inch Smart TV in excellent working condition. Includes remote control, power cable, and wall mount bracket. Screen is crystal clear with no dead pixels. Less than 2 years old.',
+            pickupAddress: '234 Media Boulevard, Los Angeles, CA 90001',
+            contactNumber: '+1-555-0107',
             status: 'accepted',
-            createdAt: daysAgo(5),
-            updatedAt: daysAgo(1),
+            createdAt: new Date('2024-01-13T13:45:00Z'),
+            updatedAt: new Date('2024-01-15T09:30:00Z'),
         },
+
+        // Picked-up Donation
         {
-            userId: donorIds[1],
-            ngoId: ngoIds[1],
-            itemType: 'electronics',
-            itemName: 'Dell Laptop with Accessories',
+            userId: 'user_07o0rdz8k4f5e9h7t3s2w1c4x0',
+            ngoId: 'user_07o0rdz8k4f5e9h7t3s2w1c4x0',
+            itemType: 'furniture',
+            itemName: 'Single Bed with Mattress',
             condition: 'good',
             quantity: 1,
-            description: 'Dell Inspiron 15 laptop with charger and mouse. Works perfectly, some wear on keyboard.',
-            pickupAddress: '123 Nehru Place, Ahmedabad 380001',
-            contactNumber: '+91 98678 90123',
-            status: 'accepted',
-            createdAt: daysAgo(6),
-            updatedAt: daysAgo(2),
-        },
-        // 1 Picked-up donation
-        {
-            userId: donorIds[2],
-            ngoId: ngoIds[2],
-            itemType: 'furniture',
-            itemName: 'Study Desk and Chair',
-            condition: 'fair',
-            quantity: 1,
-            description: 'Wooden study desk with drawer and matching chair. Shows signs of use but sturdy and functional.',
-            pickupAddress: '456 Salt Lake, Hyderabad 500001',
-            contactNumber: '+91 98789 01234',
+            description: 'Single bed frame (metal) with a 6-inch memory foam mattress. Frame is sturdy with no rust. Mattress is clean, no stains or tears. Only 1 year old.',
+            pickupAddress: '567 Sleep Avenue, Chicago, IL 60601',
+            contactNumber: '+1-555-0108',
             status: 'picked-up',
-            createdAt: daysAgo(7),
-            updatedAt: daysAgo(1),
+            createdAt: new Date('2024-01-10T15:00:00Z'),
+            updatedAt: new Date('2024-01-14T14:30:00Z'),
+        },
+
+        // Delivered Donation
+        {
+            userId: 'user_09q2tfb0m6h7g1j9v5u4y3e6z2',
+            ngoId: 'user_08p1sea9l5g6f0i8u4t3x2d5y1',
+            itemType: 'clothing',
+            itemName: 'Professional Work Clothes',
+            condition: 'excellent',
+            quantity: 10,
+            description: 'High-quality professional attire including suits, dress shirts, blouses, and dress pants. All items are dry-cleaned and in excellent condition. Sizes range from small to large. Perfect for job interviews and office wear.',
+            pickupAddress: '890 Professional Plaza, New York, NY 10001',
+            contactNumber: '+1-555-0109',
+            status: 'delivered',
+            createdAt: new Date('2024-01-08T12:00:00Z'),
+            updatedAt: new Date('2024-01-15T16:45:00Z'),
         },
     ];
 
     await db.insert(donations).values(sampleDonations);
     
-    console.log('✅ Donations seeder completed successfully');
+    console.log('✅ Donations seeder completed successfully - 9 donation records created');
 }
 
 main().catch((error) => {
